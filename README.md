@@ -1,12 +1,12 @@
 # Code Interpreter Coding Contest
 
-Code Interpreter Coding Contestは、様々な問題をコーディングコンテスト・タイムアタック形式でで競い合うためのサーバーレスプラットフォームです。
+Code Interpreter Coding Contestは、様々な問題をコーディングコンテスト・タイムアタック形式で競い合うためのサーバーレスプラットフォームです。
 
-Amazon Bedrock Code Interpreterを活用した安全なコード実行環境、リアルタイムリーダーボード、RESTful APIを提供し、AI駆動のコーディングコンテストを簡単に開催できます。
+Amazon Bedrock AgentCore Code Interpreterを活用したサンドボックスでの安全なコード実行環境、リアルタイムリーダーボード、RESTful APIを提供し、AI駆動のコーディングコンテストを簡単に開催できます。
 
 ## 主な機能
 
-- **安全なコード実行**: Amazon Bedrock Code Interpreterによるサンドボックス環境でのPythonコード実行
+- **安全なコード実行**: Amazon Bedrock AgentCore Code Interpreterによるサンドボックス環境でのPythonコード実行
 - **リアルタイムリーダーボード**: CloudFront + S3でホストされる自動更新型のWebインターフェース
 - **RESTful API**: コード提出、順位取得、ゲーム状態管理のためのAPI Gateway統合
 - **カスタマイズ可能な問題セット**: JSON形式で簡単に問題を追加・編集可能
