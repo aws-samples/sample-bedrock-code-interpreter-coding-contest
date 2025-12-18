@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理画面</title>
+    <link rel="stylesheet" href="common.css">
+    <script src="config.js"></script>
+    <script src="components.js"></script>
+    <style>
+        .admin-panel {
+            padding: 32px;
+        }
+        .status-card {
+            background: white;
+            border: 2px solid #d5d9d9;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .status-card h2 {
+            margin: 0 0 16px 0;
+            color: #0f1111;
+        }
+        .status-display {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f7f8fa;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .status-active {
+            background: #007600;
+            color: white;
+        }
+        .status-inactive {
+            background: #d13212;
+            color: white;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <app-header></app-header>
+        <app-nav current="admin"></app-nav>
+        
+        <div class="admin-panel">
+            <div class="status-card">
+                <h2>ゲーム状態管理</h2>
+                <div class="status-display">
+                    <span>現在の状態:</span>
+                    <span id="statusBadge" class="status-badge">読み込み中...</span>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-success" id="startBtn">ゲーム開始</button>
+                    <button class="btn btn-danger" id="stopBtn">ゲーム終了</button>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h2>リセット</h2>
+                <p style="color: #565959; margin-bottom: 16px;">リーダーボードをリセットします。この操作は取り消せません。</p>
+                <button class="btn btn-danger" id="resetAllBtn">全てリセット</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.API_CONFIG?.url || 'http://localhost:3000';
+        
+        const statusBadge = document.getElementById('statusBadge');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetAllBtn = document.getElementById('resetAllBtn');
+
+        async function loadGameState() {
+            try {
+                const response = await fetch(`${API_URL}/game-state`);
+                const data = await response.json();
+                updateUI(data.is_active);
+            } catch (error) {
+                console.error('Failed to load game state:', error);
+                statusBadge.textContent = 'エラー';
+                statusBadge.className = 'status-badge';
+            }
+        }
+
+        function updateUI(isActive) {
+            if (isActive) {
+                statusBadge.textContent = '🟢 稼働中';
+                statusBadge.className = 'status-badge status-active';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                statusBadge.textContent = '🔴 停止中';
+                statusBadge.className = 'status-badge status-inactive';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+
+        async function setGameState(isActive) {
+            try {
+                const response = await fetch(`${API_URL}/game-state`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: isActive })
+                });
+                const data = await response.json();
+                updateUI(data.is_active);
+                alert(isActive ? '✅ ゲームを開始しました' : '✅ ゲームを終了しました');
+            } catch (error) {
+                alert('❌ 状態の更新に失敗しました');
+            }
+        }
+
+        async function resetAll() {
+            if (!confirm('全てのリーダーボードをリセットしますか？\nこの操作は取り消せません。')) return;
+            try {
+                const response = await fetch(`${API_URL}/reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    alert('✅ リーダーボードをリセットしました');
+                } else {
+                    alert('❌ リセットに失敗しました');
+                }
+            } catch (error) {
+                alert('❌ リセットに失敗しました');
+            }
+        }
+
+        startBtn.addEventListener('click', () => setGameState(true));
+        stopBtn.addEventListener('click', () => {
+            setGameState(false);
+        });
+        resetAllBtn.addEventListener('click', resetAll);
+
+        loadGameState();
+        setInterval(loadGameState, 5000);
+    </script>
+</body>
+</html>

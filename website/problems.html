@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題一覧</title>
+    <link rel="stylesheet" href="common.css">
+    <script src="config.js"></script>
+    <script src="components.js"></script>
+</head>
+<body>
+    <div class="container">
+        <app-header></app-header>
+        <app-nav current="problems"></app-nav>
+        <div class="content" id="problems-container"></div>
+    </div>
+    <script>
+        fetch('/problems.json')
+            .then(r => r.json())
+            .then(problems => {
+                const container = document.getElementById('problems-container');
+                Object.entries(problems).sort(([a], [b]) => a - b).forEach(([num, p]) => {
+                    const card = document.createElement('div');
+                    card.className = 'problem-card';
+                    card.innerHTML = `
+                        <h2 class="problem-title">問題${num}: ${p.title}</h2>
+                        <div class="problem-description">
+                            ${p.description.map(d => `<p>${d}</p>`).join('')}
+                        </div>
+                        ${p.examples.map(ex => `
+                            <div class="example">
+                                <strong>入力例:</strong> ${ex.input}<br>
+                                <strong>出力例:</strong> ${ex.output}
+                            </div>
+                        `).join('')}
+                    `;
+                    container.appendChild(card);
+                });
+            });
+    </script>
+</body>
+</html>
