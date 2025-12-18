@@ -12,6 +12,18 @@ Amazon Bedrock AgentCore Code Interpreterを活用したサンドボックスで
 - **カスタマイズ可能な問題セット**: JSON形式で簡単に問題を追加・編集可能
 - **Basic認証**: 管理画面へのアクセス制御
 
+## デプロイ
+
+```bash
+pip3 install -r requirements.txt
+cdk bootstrap  # 初回のみ
+cdk deploy --parameters AdminUsername=<ユーザー名> --parameters AdminPassword=<セキュアなパスワード>
+```
+
+## 使用方法
+
+詳細はRUNBOOK.mdをご参照ください。
+
 ## アーキテクチャ
 
 ```mermaid
@@ -88,18 +100,6 @@ sequenceDiagram
     LL->>API: ランキングデータ
     API->>U: {leaderboard, problem_states}
 ```
-
-## デプロイ
-
-```bash
-pip3 install -r requirements.txt
-cdk bootstrap  # 初回のみ
-cdk deploy --parameters AdminUsername=<ユーザー名> --parameters AdminPassword=<セキュアなパスワード>
-```
-
-## 使用方法
-
-詳細はRUNBOOK.mdをご参照ください。
 
 ## Security
 
